@@ -8,9 +8,11 @@ import {
   AmbientLight,
   DirectionalLight,
   Color,
+  DirectionalLightHelper,
 } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import "./index.scss";
@@ -27,18 +29,18 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // renderer.setClearColor(0xffffff);
 document.body.appendChild(renderer.domElement);
 
-const keyLight = new DirectionalLight(new Color("hsl(30, 100%, 75%)"), 1.0);
-keyLight.position.set(-100, 0, 100);
+const keyLight = new DirectionalLight(0xff560b, 5);
+keyLight.position.set(70, 10, 100);
 
-const fillLight = new DirectionalLight(new Color("hsl(240, 100%, 75%)"), 0.75);
-fillLight.position.set(100, 0, 100);
-
-const backLight = new DirectionalLight(0xffffff, 1.0);
-backLight.position.set(100, 0, -100).normalize();
+const secondaryLight = new DirectionalLight(0xffffff, 1.5);
+secondaryLight.position.set(0, -100, 40);
 
 scene.add(keyLight);
-scene.add(fillLight);
-scene.add(backLight);
+
+const helper = new DirectionalLightHelper(keyLight);
+// const secondaryHelper = new DirectionalLightHelper(secondaryLight);
+scene.add(helper);
+// scene.add(secondaryHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -46,36 +48,69 @@ controls.dampingFactor = 0.25;
 controls.enableZoom = true;
 controls.update();
 
-camera.position.z = 200;
+camera.position.z = 150;
 
 const mtlLoader = new MTLLoader();
+const loader = new OBJLoader();
+loader.setPath("/assets/");
+mtlLoader.setPath("/assets/");
 
-mtlLoader.load("/assets/moon.mtl", (materials) => {
-  console.log("hello :)", materials);
-
+let moon;
+mtlLoader.load("moon.mtl", (materials) => {
   materials.preload();
-  const loader = new OBJLoader();
+
   loader.setMaterials(materials);
-  loader.load(
-    // resource URL
-    "/assets/moon.obj",
-    // called when resource is loaded
-    function (object) {
-      scene.add(object);
-    },
-    // called when loading is in progresses
-    function (xhr) {
-      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-    },
-    // called when loading has errors
-    function (error) {
-      console.log("An error happened");
-    }
-  );
+  loader.load("moon.obj", (object) => {
+    moon = object;
+    moon.rotateY(180);
+    moon.rotateX(-0.3);
+    scene.add(object);
+  });
 });
+
+// let tree;
+// mtlLoader.load("/assets/Tree1/Tree1.mtl", (materials) => {
+//   materials.preload();
+//   const loader = new OBJLoader();
+//   loader.setMaterials(materials);
+//   loader.load(
+//     "/assets/Tree1/Tree1.obj",
+//     function (object) {
+//       keyLight.target = object;
+//       tree = object;
+//       // keyLight.target = tree;
+//       // moon = object;
+//       // moon.rotateY(180);
+//       // moon.rotateX(-0.3);
+//       // keyLight.target = moon;
+//       // object.scale.set(1, 1);
+//       // mesh.scale.set(2, 2, 2);
+//       tree.position.z += 80;
+//       // tree.position.y -= 50;
+//       // tree.position.x += 20;
+//       scene.add(object);
+//     },
+//     // called when loading is in progresses
+//     function (xhr) {
+//       console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+//     },
+//     // called when loading has errors
+//     function (error) {
+//       console.log("An error happened");
+//     }
+//   );
+// });
 
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
+  helper.update();
+  // secondaryHelper.update();
+  if (moon) {
+    moon.rotation.y += 0.0005;
+  }
+  // moon.rotation.x -= 0.001;
+  // moon.rotation.z += 0.003;
+  // tree.scale.set(10, 10, 5);
 }
 animate();
