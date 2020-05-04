@@ -18,7 +18,6 @@ void main(){
   float mixValue=distance(st,vec2(0,1));
   vec3 color=mix(color1,color2,mixValue);
   
-  gl_FragColor=vec4(color,mixValue);
-  // gl_FragColor=vec4(0,0,0.,1.);
-  
+  // gl_FragColor=vec4(color,mixValue);
+  gl_FragColor=vec4(0,0,0.,1.);
 }

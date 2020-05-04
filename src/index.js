@@ -71,8 +71,6 @@ mesh.position.z += 3;
 mesh.position.x += 0.5;
 scene.add(mesh);
 
-mesh.addEventListener("");
-
 const raycaster = new Raycaster();
 const mouse = new Vector2(1, 1);
 // const intersects = [];
@@ -83,16 +81,22 @@ function onMouseMove(event) {
 
   const intersects = raycaster.intersectObjects(scene.children);
 
-  for (let i = 0; i < intersects.length; i++) {
-    // console.log("intersecting", Array.fromintersects);
-    // mesh.scale.set(3, 3, 3);
-    console.log("helllllooooooooo", intersects.length);
-    // intersects[i].object.material.color.set(0xff0000);
-  }
+  // for (let i = 0; i < intersects.length; i++) {
+  //   console.log("helllllooooooooo", intersects.length);
+  // }
 }
 
+console.log(mesh.scale);
+let spacePressed = false;
 function animate() {
   raycaster.setFromCamera(mouse, camera);
+  if (spacePressed) {
+    mesh2.scale.x += 0.03;
+    mesh2.scale.y += 0.03;
+  } else if (!spacePressed && mesh2.scale.x > 1) {
+    mesh2.scale.x -= 0.03;
+    mesh2.scale.y -= 0.03;
+  }
   circleMat2.uniforms.u_time.value = 0.00025 * (Date.now() - start);
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
@@ -107,5 +111,16 @@ function onWindowResize() {
 
 window.addEventListener("mousemove", onMouseMove, false);
 window.addEventListener("resize", onWindowResize, false);
+window.addEventListener("keydown", (e) => {
+  if (e.keyCode === 32) {
+    spacePressed = true;
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.keyCode === 32) {
+    spacePressed = false;
+  }
+});
 
 animate();
