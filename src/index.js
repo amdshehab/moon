@@ -71,8 +71,6 @@ mesh.position.z += 3;
 mesh.position.x += 0.5;
 scene.add(mesh);
 
-// mesh.scale.set(2, 2, 2);
-
 mesh.addEventListener("");
 
 const raycaster = new Raycaster();
@@ -82,27 +80,32 @@ const mouse = new Vector2(1, 1);
 function onMouseMove(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  const intersects = raycaster.intersectObjects(scene.children);
+
+  for (let i = 0; i < intersects.length; i++) {
+    // console.log("intersecting", Array.fromintersects);
+    // mesh.scale.set(3, 3, 3);
+    console.log("helllllooooooooo", intersects.length);
+    // intersects[i].object.material.color.set(0xff0000);
+  }
 }
 
 function animate() {
   raycaster.setFromCamera(mouse, camera);
-
-  // calculate objects intersecting the picking ray
-  const intersects = raycaster.intersectObjects(mesh);
-
-  for (const i = 0; i < intersects.length; i++) {
-    // console.log("intersecting", Array.fromintersects);
-    // mesh.scale.set(3, 3, 3);
-    // console.log("helllllooooooooo", intersects[i]);
-
-    intersects[i].object.material.color.set(0xff0000);
-  }
-
   circleMat2.uniforms.u_time.value = 0.00025 * (Date.now() - start);
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 window.addEventListener("mousemove", onMouseMove, false);
+window.addEventListener("resize", onWindowResize, false);
 
 animate();
