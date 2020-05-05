@@ -1,8 +1,12 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 varying vec2 vUv;
 varying float noise;
+uniform vec4 uColor;
 
 uniform vec2 u_resolution;
-
 void main(){
   
   // compose the colour using the UV coordinate
@@ -19,5 +23,5 @@ void main(){
   vec3 color=mix(color1,color2,mixValue);
   
   // gl_FragColor=vec4(color,mixValue);
-  gl_FragColor=vec4(0,0,0.,1.);
+  gl_FragColor=uColor;
 }

@@ -101,12 +101,14 @@ float pnoise(vec2 P,vec2 rep)
 varying vec2 vUv;
 varying float noise;
 uniform float u_time;
+uniform float noise_radius;
+uniform float noise_edge;
 
 void main(){
   
   vUv=uv;
   
-  float displacement=2.*pnoise(.95*position.xy+vec2(3.*u_time),vec2(100.));
+  float displacement=noise_edge*pnoise(noise_radius*position.xy+vec2(3.*u_time),vec2(100.));
   vec3 newPosition=position+normal*displacement;
   gl_Position=projectionMatrix*modelViewMatrix*vec4(newPosition,1.);
   

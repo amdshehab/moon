@@ -7,9 +7,11 @@ import {
   CircleGeometry,
   Mesh,
   MeshPhongMaterial,
+  MeshLambertMaterial,
   ShaderMaterial,
   Vector2,
   Raycaster,
+  Vector4,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -55,6 +57,18 @@ const circleMat2 = new ShaderMaterial({
       type: "v2",
       value: new Vector2(window.innerWidth, window.innerHeight),
     },
+    noise_radius: {
+      type: "f",
+      value: 1.6,
+    },
+    noise_edge: {
+      type: "f",
+      value: 2,
+    },
+    uColor: {
+      type: "v4",
+      value: new Vector4(0, 0, 0, 1),
+    },
   },
   vertexShader: meshShader,
   fragmentShader: meshFragShader,
@@ -64,12 +78,40 @@ const mesh2 = new Mesh(circleGeom2, circleMat2);
 scene.add(mesh2);
 
 const circleGeom = new CircleGeometry(5, 400);
-const circleMat = new MeshPhongMaterial({ color: "#ffffff" });
+// const circleMat = new MeshLambertMaterial({ color: "#ffffff" });
+const circleMat = new ShaderMaterial({
+  uniforms: {
+    u_time: {
+      type: "f",
+      value: 0.0,
+    },
+    u_resolution: {
+      type: "v2",
+      value: new Vector2(window.innerWidth, window.innerHeight),
+    },
+    noise_radius: {
+      type: "f",
+      value: 4,
+    },
+    noise_edge: {
+      type: "f",
+      value: 3,
+    },
+    uColor: {
+      type: "v4",
+      value: new Vector4(255, 255, 255, 1),
+    },
+  },
+  vertexShader: meshShader,
+  fragmentShader: meshFragShader,
+});
 
 const mesh = new Mesh(circleGeom, circleMat);
 mesh.position.z += 3;
 mesh.position.x += 0.5;
 scene.add(mesh);
+mesh.geometry.computeVertexNormals();
+mesh.geometry.mergeVertices();
 
 const raycaster = new Raycaster();
 const mouse = new Vector2(1, 1);
@@ -98,6 +140,7 @@ function animate() {
     mesh2.scale.y -= 0.03;
   }
   circleMat2.uniforms.u_time.value = 0.00025 * (Date.now() - start);
+  circleMat.uniforms.u_time.value = 0.00025 * (Date.now() - start);
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }

@@ -3,3 +3,23 @@ body {
   height: 100vh;
   margin: 0;
 }
+
+@font-face {
+  font-family: Relancer;
+  src: url("/assets/Relancer-Regular.otf");
+}
+
+@font-face {
+  font-family: Bolt;
+  src: url("/assets/Bolt-Regular.ttf");
+}
+
+h1 {
+  font-family: Relancer;
+  font-size: 3em;
+}
+
+.About {
+  position: absolute;
+  margin: 50px;
+}
